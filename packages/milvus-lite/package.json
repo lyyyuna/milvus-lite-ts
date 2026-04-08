@@ -1,6 +1,6 @@
 {
   "name": "@lyyyuna/milvus-lite",
-  "version": "2.5.1.0",
+  "version": "2.5.101",
   "description": "Node.js wrapper for milvus-lite - embedded vector database",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -24,10 +24,10 @@
     "dist"
   ],
   "optionalDependencies": {
-    "@lyyyuna/milvus-lite-darwin-arm64": "2.5.1.0",
-    "@lyyyuna/milvus-lite-darwin-x64": "2.5.1.0",
-    "@lyyyuna/milvus-lite-linux-x64": "2.5.1.0",
-    "@lyyyuna/milvus-lite-linux-arm64": "2.5.1.0"
+    "@lyyyuna/milvus-lite-darwin-arm64": "2.5.101",
+    "@lyyyuna/milvus-lite-darwin-x64": "2.5.101",
+    "@lyyyuna/milvus-lite-linux-x64": "2.5.101",
+    "@lyyyuna/milvus-lite-linux-arm64": "2.5.101"
   },
   "devDependencies": {
     "@zilliz/milvus2-sdk-node": "^2.6.0",
