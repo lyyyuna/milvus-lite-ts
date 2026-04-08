@@ -1,39 +1,8 @@
 {
-  "name": "milvus-lite",
-  "version": "2.5.1",
-  "description": "Node.js wrapper for milvus-lite - embedded vector database",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "private": true,
   "scripts": {
-    "build": "tsc",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "prepublishOnly": "npm run build"
-  },
-  "keywords": ["milvus", "vector", "database", "embedding", "similarity-search"],
-  "author": "lyyyuna",
-  "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/lyyyuna/milvus-lite-ts.git"
-  },
-  "engines": {
-    "node": ">=18"
-  },
-  "files": [
-    "dist"
-  ],
-  "devDependencies": {
-    "@zilliz/milvus2-sdk-node": "^2.6.0",
-    "typescript": "^5.0.0",
-    "vitest": "^3.0.0"
-  },
-  "peerDependencies": {
-    "@zilliz/milvus2-sdk-node": ">=2.4.0"
-  },
-  "peerDependenciesMeta": {
-    "@zilliz/milvus2-sdk-node": {
-      "optional": true
-    }
+    "build": "cd packages/milvus-lite && npm run build",
+    "test": "cd packages/milvus-lite && npm test",
+    "fetch-binaries": "bash scripts/fetch-binaries.sh"
   }
 }

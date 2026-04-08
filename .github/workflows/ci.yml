@@ -14,10 +14,16 @@ jobs:
         include:
           - os: macos-14
             name: macOS arm64
+            platform_pkg: milvus-lite-darwin-arm64
+            wheel_platform: macosx_11_0_arm64
           - os: macos-15
             name: macOS amd64
+            platform_pkg: milvus-lite-darwin-x64
+            wheel_platform: macosx_10_9_x86_64
           - os: ubuntu-latest
             name: Linux amd64
+            platform_pkg: milvus-lite-linux-x64
+            wheel_platform: manylinux2014_x86_64
 
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
@@ -29,14 +35,38 @@ jobs:
         with:
           node-version: '20'
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Install dependencies
+        working-directory: packages/milvus-lite
         run: npm ci
 
+      - name: Fetch platform binary
+        run: |
+          pip download "milvus-lite==2.5.1" \
+            --no-deps --only-binary=:all: \
+            --platform ${{ matrix.wheel_platform }} \
+            --python-version 3 \
+            -d /tmp/wheels -q
+
+          PKG_DIR="packages/${{ matrix.platform_pkg }}"
+          mkdir -p "$PKG_DIR/lib"
+          unzip -o -q /tmp/wheels/*.whl "milvus_lite/lib/*" -d /tmp/extract
+          cp -R /tmp/extract/milvus_lite/lib/* "$PKG_DIR/lib/"
+          chmod +x "$PKG_DIR/lib/milvus"
+
+      - name: Link platform package
+        working-directory: packages/milvus-lite
+        run: |
+          mkdir -p node_modules/@lyyyuna
+          ln -sf ../../../packages/${{ matrix.platform_pkg }} node_modules/@lyyyuna/${{ matrix.platform_pkg }}
+
       - name: Type check
+        working-directory: packages/milvus-lite
         run: npx tsc --noEmit
 
-      - name: Unit tests
-        run: npx vitest run test/download.test.ts
-
-      - name: Integration tests (download + all APIs)
-        run: npx vitest run test/api.test.ts
+      - name: Integration tests
+        working-directory: packages/milvus-lite
+        run: npx vitest run

@@ -2,7 +2,8 @@ import { ChildProcess, spawn } from "child_process";
 import * as net from "net";
 import * as path from "path";
 import * as fs from "fs";
-import { ensureBinary, MILVUS_LITE_VERSION } from "./download";
+
+export const MILVUS_LITE_VERSION = "2.5.1";
 
 export interface MilvusLiteServer {
   /** The gRPC address to connect to (e.g., "localhost:19530") */
@@ -19,10 +20,38 @@ export interface StartOptions {
 }
 
 /**
+ * Resolves the lib directory from the platform-specific npm package.
+ */
+function resolveLibDir(): string {
+  const key = `${process.platform}-${process.arch}`;
+  const pkgName = `@lyyyuna/milvus-lite-${key}`;
+
+  try {
+    const pkg = require(pkgName);
+    const libDir: string = pkg.libDir;
+
+    if (!fs.existsSync(path.join(libDir, "milvus"))) {
+      throw new Error(`milvus binary not found in ${libDir}`);
+    }
+
+    return libDir;
+  } catch (err: any) {
+    if (err.code === "MODULE_NOT_FOUND") {
+      throw new Error(
+        `Platform package ${pkgName} is not installed. ` +
+          `Run: npm install ${pkgName}`
+      );
+    }
+    throw err;
+  }
+}
+
+/**
  * Start a milvus-lite server.
  *
- * Downloads the binary on first use from PyPI (respects pip.conf mirrors).
- * Subsequent calls use the cached binary at ~/.cache/milvus-lite/.
+ * The binary is provided by a platform-specific npm package
+ * (e.g., @lyyyuna/milvus-lite-darwin-arm64) installed automatically
+ * as an optionalDependency.
  *
  * @param dbFile Path to the local database file (e.g., "./milvus.db")
  * @param options Optional configuration
@@ -32,7 +61,7 @@ export async function start(
   dbFile: string,
   options?: StartOptions
 ): Promise<MilvusLiteServer> {
-  const lib = await ensureBinary(MILVUS_LITE_VERSION);
+  const lib = resolveLibDir();
 
   const addr = options?.address ?? `localhost:${await freePort()}`;
   const logLevel = options?.logLevel ?? "ERROR";

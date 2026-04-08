@@ -1,0 +1,10 @@
+{
+  "name": "@lyyyuna/milvus-lite-darwin-x64",
+  "version": "2.5.1",
+  "description": "milvus-lite binary for darwin x64",
+  "main": "index.js",
+  "os": ["darwin"],
+  "cpu": ["x64"],
+  "license": "Apache-2.0",
+  "files": ["index.js", "lib"]
+}

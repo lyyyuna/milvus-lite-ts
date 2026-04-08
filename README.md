@@ -2,27 +2,24 @@
 
 Node.js/TypeScript wrapper for [milvus-lite](https://github.com/milvus-io/milvus-lite) — an embedded vector database.
 
-Start a milvus-lite server from Node.js with zero external dependencies. The pre-built binary is automatically downloaded from PyPI on first use and cached locally.
+The pre-built milvus binary is bundled in platform-specific npm packages. `npm install` automatically picks the right one for your platform — no runtime downloads needed.
 
 ## Install
 
 ```bash
-npm install milvus-lite @zilliz/milvus2-sdk-node
+npm install @lyyyuna/milvus-lite @zilliz/milvus2-sdk-node
 ```
 
 ## Usage
 
 ```typescript
-import { start } from "milvus-lite";
+import { start } from "@lyyyuna/milvus-lite";
 import { MilvusClient, DataType } from "@zilliz/milvus2-sdk-node";
 
-// Start milvus-lite (downloads binary on first run)
 const server = await start("./milvus.db");
 
-// Connect with the official Node.js SDK
 const client = new MilvusClient({ address: server.addr });
 
-// Use as normal Milvus
 await client.createCollection({
   collection_name: "demo",
   fields: [
@@ -31,16 +28,21 @@ await client.createCollection({
   ],
 });
 
-// Don't forget to stop when done
 await server.stop();
 ```
 
 ## How it works
 
-1. On first `start()`, downloads the milvus-lite wheel from PyPI (respects `pip.conf` mirror settings for users in China)
-2. Extracts the `milvus` binary + shared libraries to `~/.cache/milvus-lite/{version}/{os}-{arch}/`
-3. Starts the binary as a subprocess listening on a random localhost port
-4. Returns the gRPC address for use with [@zilliz/milvus2-sdk-node](https://github.com/milvus-io/milvus-sdk-node)
+```
+@lyyyuna/milvus-lite                     ← main package (pure JS)
+├── optionalDependencies:
+│   ├── @lyyyuna/milvus-lite-darwin-arm64    ← macOS Apple Silicon binary
+│   ├── @lyyyuna/milvus-lite-darwin-x64      ← macOS Intel binary
+│   ├── @lyyyuna/milvus-lite-linux-x64       ← Linux amd64 binary
+│   └── @lyyyuna/milvus-lite-linux-arm64     ← Linux arm64 binary
+```
+
+npm automatically installs only the package matching your platform. At runtime, `start()` requires the platform package to get the binary path, then spawns it as a subprocess.
 
 ## API
 
@@ -56,18 +58,18 @@ Returns `{ addr: string, stop: () => Promise<void> }`
 
 ## Supported platforms
 
-| OS | Arch | Status |
-|----|------|--------|
-| macOS | arm64 (Apple Silicon) | ✅ |
-| macOS | amd64 (Intel) | ✅ |
-| Linux | amd64 | ✅ |
-| Linux | arm64 | ✅ |
+| OS | Arch | npm package |
+|----|------|-------------|
+| macOS | arm64 (Apple Silicon) | `@lyyyuna/milvus-lite-darwin-arm64` |
+| macOS | amd64 (Intel) | `@lyyyuna/milvus-lite-darwin-x64` |
+| Linux | amd64 | `@lyyyuna/milvus-lite-linux-x64` |
+| Linux | arm64 | `@lyyyuna/milvus-lite-linux-arm64` |
 
 ## API compatibility
 
 All milvus-lite supported APIs work with the official Node.js SDK:
 
-- **Collection**: Create, Drop, Has, Describe, List, GetStatistics
+- **Collection**: Create, Drop, Has, List, GetStatistics
 - **Index**: Create (FLAT, IVF_FLAT), Describe, Drop
 - **Data**: Insert, Upsert, Delete
 - **Search**: Search (with filters), Query
