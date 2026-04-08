@@ -48,7 +48,7 @@ jobs:
           pip download "milvus-lite==2.5.1" \
             --no-deps --only-binary=:all: \
             --platform ${{ matrix.wheel_platform }} \
-            --python-version 3 \
+            --python-version 3.11 \
             -d /tmp/wheels -q
 
           PKG_DIR="packages/${{ matrix.platform_pkg }}"
