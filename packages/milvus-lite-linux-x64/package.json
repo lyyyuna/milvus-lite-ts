@@ -1,6 +1,6 @@
 {
   "name": "@lyyyuna/milvus-lite-linux-x64",
-  "version": "2.5.1",
+  "version": "2.5.1.0",
   "description": "milvus-lite binary for linux x64",
   "main": "index.js",
   "os": ["linux"],

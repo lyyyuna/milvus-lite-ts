@@ -1,6 +1,6 @@
 {
   "name": "@lyyyuna/milvus-lite-darwin-arm64",
-  "version": "2.5.1",
+  "version": "2.5.1.0",
   "description": "milvus-lite binary for macOS arm64 (Apple Silicon)",
   "main": "index.js",
   "os": ["darwin"],
