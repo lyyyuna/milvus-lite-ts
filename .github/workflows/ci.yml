@@ -16,10 +16,6 @@ jobs:
             name: macOS arm64
             platform_pkg: milvus-lite-darwin-arm64
             wheel_platform: macosx_11_0_arm64
-          - os: macos-15
-            name: macOS amd64
-            platform_pkg: milvus-lite-darwin-x64
-            wheel_platform: macosx_10_9_x86_64
           - os: ubuntu-latest
             name: Linux amd64
             platform_pkg: milvus-lite-linux-x64
@@ -61,7 +57,7 @@ jobs:
         working-directory: packages/milvus-lite
         run: |
           mkdir -p node_modules/@lyyyuna
-          ln -sf ../../../packages/${{ matrix.platform_pkg }} node_modules/@lyyyuna/${{ matrix.platform_pkg }}
+          ln -sf "$GITHUB_WORKSPACE/packages/${{ matrix.platform_pkg }}" node_modules/@lyyyuna/${{ matrix.platform_pkg }}
 
       - name: Type check
         working-directory: packages/milvus-lite
